@@ -1,12 +1,18 @@
-import React, { Fragment,useRef ,useState} from 'react';
+import React, { Fragment,useRef ,useState,useEffect} from 'react';
 import "./LoginSignUp.css";
 import Loader from '../layout/Loader/Loader';
 import { Link } from 'react-router-dom';
 import MailOutLineIcon from"@material-ui/icons/MailOutline";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import FaceIcon from "@material-ui/icons/Face";
+import { useDispatch, useSelector } from 'react-redux';
+import { clearErrors,login,register } from '../../actions/userAction';
+import { useAlert } from 'react-alert';
+import { useNavigate } from 'react-router-dom';
 const LoginSignUp = () => {
-
+    const dispatch = useDispatch();
+    const alert = useAlert();
+    const {error,loading,isAuthenticated} = useSelector((state) => state.user);
     const loginTab = useRef(null);
     const registerTab = useRef(null);
     const switcherTab = useRef(null);
@@ -24,8 +30,10 @@ const LoginSignUp = () => {
     const [avatarPreview, setAvatarPreview] = useState("/Profile.png");
 
 
-    const loginSubmit = () => {
-       console.log("Login Form Submitted")
+
+    const loginSubmit = (e) => {
+        e.preventDefault();
+       dispatch(login(loginEmail,loginPassword));
     };
 
     const registerSubmit = (e) => {
@@ -37,7 +45,7 @@ const LoginSignUp = () => {
         myForm.set("email",email);
         myForm.set("password", password);
         myForm.set("avatar", avatar);
-        console.log("Sign Up Form Submitted");
+        dispatch(register(myForm));
     };
 
     const registerDataChange = (e) => {
@@ -55,6 +63,20 @@ const LoginSignUp = () => {
         setUser({...user, [e.target.name]: e.target.value});
      }
     };
+
+    let navigate = useNavigate();
+
+    useEffect (() => {
+
+        if (error) {
+            alert.error(error);
+            dispatch(clearErrors());
+        }
+        if (isAuthenticated) {
+            navigate("/account")
+        }
+   
+    }, [dispatch,error,alert,isAuthenticated]);
 
 
     const switchTabs = (e,tab) => {
@@ -77,6 +99,8 @@ const LoginSignUp = () => {
 
     return (
         <Fragment>
+         {loading ? <Loader /> : 
+           <Fragment>
             <div className="LoginSignUpContainer">
                 <div className="LoginSignUpBox">
                     <div>
@@ -171,10 +195,13 @@ const LoginSignUp = () => {
                     />
                         
 
-                    </form>
+                 </form>
                 </div>   
             </div>
-        </Fragment>
+           </Fragment>
+         }
+       </Fragment>
+
     );  
 };
 
