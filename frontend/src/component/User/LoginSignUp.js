@@ -76,7 +76,7 @@ const LoginSignUp = () => {
             navigate("/account")
         }
    
-    }, [dispatch,error,alert,isAuthenticated]);
+    }, [dispatch,error,alert,isAuthenticated,navigate]);
 
 
     const switchTabs = (e,tab) => {
