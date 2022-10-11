@@ -30,7 +30,7 @@ function App() {
     <Router>
 
       <Header />
-      {isAuthenticated && <UserOptions user ={user} />}   
+      {isAuthenticated && <UserOptions user = {user} />}   
       <Routes>
      
       <Route exact path="/" element={<Home/>}/>
